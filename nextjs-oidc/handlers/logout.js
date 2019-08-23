@@ -12,7 +12,7 @@ module.exports = config => async (req, res) => {
     };
   };
 
-  res.setHeader("Set-Cookie", cookie.serialize("access_token", "", cookieOptions(true)));
+  res.setHeader("Set-Cookie", cookie.serialize(config.cookie.name, "", cookieOptions(true)));
 
   const logoutURL = new URL(`https://${config.domain}/v2/logout`);
   const searchString = querystring.stringify({

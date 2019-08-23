@@ -2,6 +2,7 @@ const cookie = require("cookie");
 const cookieOptions = require("../_util/cookie/options");
 
 const { Issuer } = require("openid-client");
+const encodeCookie = require("../helpers/encode-cookie");
 
 module.exports = config => async (req, res) => {
   const issuer = await Issuer.discover(`https://${config.domain}`);
@@ -24,14 +25,22 @@ module.exports = config => async (req, res) => {
     console.log(tokenSet);
   }
 
-  const cookieEntries = [cookie.serialize("access_token", String(tokenSet.access_token), cookieOptions(true, true))];
-
-  Object.keys(claims).forEach(claim => {
-    cookieEntries.push(cookie.serialize(claim, String(claims[claim]), cookieOptions(true, true)));
-  });
+  const cookieEntries = [
+    cookie.serialize(
+      config.cookie.name,
+      encodeCookie(
+        config.cookie.secret,
+        {
+          access_token: tokenSet.access_token,
+          ...claims
+        },
+        config.cookie.name
+      ),
+      cookieOptions(true, true)
+    )
+  ];
 
   res.setHeader("Set-Cookie", cookieEntries);
-
   res.setHeader("Location", "/");
   res.writeHead(302);
   res.end();

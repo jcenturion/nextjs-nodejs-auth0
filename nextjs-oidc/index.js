@@ -9,7 +9,10 @@ module.exports = config => requestListener => (req, res) => {
   const { pathname } = parsedUrl;
 
   req.oidc = {
-    getUser: getUser(config)(req, res)
+    getUser: getUser(config)(req, res),
+    cookie: {
+      name: config.cookie.name
+    }
   };
 
   switch (pathname) {
@@ -23,6 +26,6 @@ module.exports = config => requestListener => (req, res) => {
       handleLogout(config)(req, res);
       break;
     default:
-      requestListener(req, res, parsedUrl);
+      requestListener(req, res);
   }
 };

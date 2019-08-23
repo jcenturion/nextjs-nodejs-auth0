@@ -1,15 +1,9 @@
-const { Issuer } = require("openid-client");
 const cookie = require("cookie");
+const decodeCookie = require("./helpers/decode-cookie");
 
 module.exports = config => (req, res) => async () => {
   const cookies = cookie.parse(req.headers.cookie);
-  const issuer = await Issuer.discover(`https://${config.domain}`);
-  const client = new issuer.Client({
-    client_id: config.clientId,
-    client_secret: config.clientSecret,
-    redirect_uris: [`${config.baseUrl}/login/callback`],
-    response_types: ["code"]
-  });
-
-  return client.userinfo(cookies.access_token);
+  const cookieName = config.cookie.name;
+  const content = cookies[cookieName];
+  return decodeCookie(config.cookie.secret, content, cookieName).content;
 };
