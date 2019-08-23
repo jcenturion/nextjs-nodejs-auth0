@@ -41,7 +41,8 @@ module.exports = config => async (req, res) => {
   ];
 
   res.setHeader("Set-Cookie", cookieEntries);
-  res.setHeader("Location", "/");
-  res.writeHead(302);
+  res.writeHead(302, {
+    Location: config.baseUrl
+  });
   res.end();
 };

@@ -24,6 +24,5 @@ module.exports = config => async (req, res) => {
   res.writeHead(302, {
     Location: logoutURL
   });
-
   res.end();
 };
