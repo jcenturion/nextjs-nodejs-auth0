@@ -1,9 +1,7 @@
 const cookie = require("cookie");
-const fetch = require("node-fetch");
+const querystring = require("querystring");
 
 module.exports = config => async (req, res) => {
-  await fetch(`https://${config.domain}/v2/logout`);
-
   const cookieOptions = (http = false) => {
     return {
       httpOnly: http,
@@ -15,5 +13,17 @@ module.exports = config => async (req, res) => {
   };
 
   res.setHeader("Set-Cookie", cookie.serialize("access_token", "", cookieOptions(true)));
+
+  const logoutURL = new URL(`https://${config.domain}/v2/logout`);
+  const searchString = querystring.stringify({
+    client_id: config.clientId,
+    returnTo: config.baseUrl
+  });
+  logoutURL.search = searchString;
+
+  res.writeHead(302, {
+    Location: logoutURL
+  });
+
   res.end();
 };

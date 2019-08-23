@@ -2,35 +2,31 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Head from "next/head";
 import Cookies from "js-cookie";
-import parseJwt from "../lib/parseJwt";
 
 export default () => {
   const [auth, setAuth] = useState(false);
-  const [profile, setProfile] = useState(null);
+  const [data, setData] = useState(null);
+
   useEffect(() => {
     function getAuth() {
-      if (Cookies.get("id_token")) {
+      console.log(Cookies.get("aud"));
+      if (Cookies.get("access_token")) {
         setAuth(true);
-        setProfile(parseJwt(Cookies.get("id_token")));
         return null;
       }
     }
     getAuth();
   }, []);
+
   const getSecret = async () => {
     const res = await fetch("/api/me");
     const secret = await res.text();
-    const newProfile = { ...profile, secret };
-    setProfile(newProfile);
+    setData(secret);
   };
 
   const logout = async () => {
-    const res = await fetch("/logout");
-    if (res.status === 200) {
-      Cookies.remove("id_token");
-      setAuth(false);
-      setProfile(null);
-    }
+    Cookies.remove("access_token");
+    setAuth(false);
   };
   return (
     <>
@@ -49,10 +45,14 @@ export default () => {
               </a>
             </Link>
           ) : (
-            <button onClick={logout}>Logout</button>
+            <Link href={"/logout"}>
+              <a onClick={logout}>
+                <button>Logout</button>
+              </a>
+            </Link>
           )}
         </div>
-        {profile && profile.secret && <p>{profile.secret}</p>}
+        {data && <p>{data}</p>}
       </main>
       <style jsx>{`
         .buttons {

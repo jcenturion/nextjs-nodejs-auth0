@@ -13,7 +13,7 @@ const withOidc = nextOidc({
   domain: process.env.AUTH0_DOMAIN,
   clientId: process.env.AUTH0_CLIENT_ID,
   clientSecret: process.env.AUTH0_CLIENT_SECRET,
-  redirectUri: process.env.AUTH0_REDIRECT_URI,
+  baseUrl: process.env.BASE_URL,
   scope: "openid email profile",
   audience: "https://api.mysite.com"
 });

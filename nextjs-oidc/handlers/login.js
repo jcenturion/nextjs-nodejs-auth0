@@ -10,7 +10,7 @@ module.exports = config => async (req, res) => {
   const client = new issuer.Client({
     client_id: config.clientId,
     client_secret: config.clientSecret,
-    redirect_uris: [config.redirectUri],
+    redirect_uris: [`${config.baseUrl}/login/callback`],
     response_types: ["code"]
   });
   const authUrl = client.authorizationUrl({
